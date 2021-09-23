@@ -1,0 +1,22 @@
+<div id="snippet"><pre><code class="hljs language-rust"><span class="hljs-meta">#[derive(Debug)]</span>
+<span class="hljs-keyword">pub</span> <span class="hljs-keyword">enum</span> <span class="hljs-title class_">State</span> {
+    Start,
+    Transient,
+    Closed,
+}
+
+<span class="hljs-keyword">impl</span> <span class="hljs-title class_">From</span>&lt;&amp;<span class="hljs-symbol">'a</span> <span class="hljs-type">str</span>&gt; <span class="hljs-keyword">for</span> <span class="hljs-title class_">State</span> {
+    <span class="hljs-keyword">fn</span> <span class="hljs-title function_">from</span>(s: &amp;<span class="hljs-symbol">'a</span> <span class="hljs-type">str</span>) <span class="hljs-punctuation">-&gt;</span> <span class="hljs-keyword">Self</span> {
+        <span class="hljs-keyword">match</span> s {
+            <span class="hljs-string">"start"</span> =&gt; State::Start,
+            <span class="hljs-string">"closed"</span> =&gt; State::Closed,
+            _ =&gt; <span class="hljs-built_in">unreachable!</span>(),
+        }
+    }
+}
+</code></pre>
+<div id="control">
+  <p>language: <a id="language-link" href="/?snippet=19&amp;style=15">rust</a>
+  </p><p>style: <a id="style-link" href="/?snippet=18&amp;style=16">atom-one-dark</a>
+</p></div>
+</div>
