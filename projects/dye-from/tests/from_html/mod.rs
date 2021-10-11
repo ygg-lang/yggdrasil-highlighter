@@ -14,10 +14,24 @@ impl HighlightJs {
     #[inline]
     fn parse_node(node: Option<&Node>) -> Option<Self> {
         let tag = node?.as_tag()?;
-        println!("{:#?}", tag);
         let mut out = HighlightJs::default();
-        let attr = tag.attributes();
         out.check_code(tag);
+        out.extract_language(tag.attributes());
+
+        for child in tag.children() {
+            match child {
+                Node::Text(text) => out.text.push_str(text),
+                Node::Tag(tag) => {
+                    let tag = tag.as_tag()?;
+                    if tag.name() == "span" {
+                        out.parse_span(tag);
+                    }
+                }
+                _ => {}
+            }
+        }
+
+
         println!("{:#?}", out.extract_language(attr));
 
         todo!()
