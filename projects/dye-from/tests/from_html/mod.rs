@@ -1,4 +1,4 @@
-use tl::{Attributes, HTMLTag, Node};
+use tl::{Attributes, HTMLTag, Node, Parser};
 
 #[test]
 fn test() {
@@ -6,40 +6,32 @@ fn test() {
     let mut out = vec![];
     let parser = dom.parser();
     for block in dom.get_elements_by_class_name("hljs") {
-        if let Some(s) = HighlightJs::parse_node(block.get(parser)) { out.push(s) }
+        if let Some(s) = HighlightJs::parse_node(block.get(parser), parser) { out.push(s) }
     }
+}
+
+pub struct ClassSpan {
+    class: String,
+    start: usize,
+    end: usize,
 }
 
 impl HighlightJs {
     #[inline]
-    fn parse_node(node: Option<&Node>) -> Option<Self> {
+    fn parse_node(node: Option<&Node>, parser: &Parser) -> Option<Self> {
         let tag = node?.as_tag()?;
         let mut out = HighlightJs::default();
-        out.check_code(tag);
-        out.extract_language(tag.attributes());
-
-        for child in tag.children() {
-            match child {
-                Node::Text(text) => out.text.push_str(text),
-                Node::Tag(tag) => {
-                    let tag = tag.as_tag()?;
-                    if tag.name() == "span" {
-                        out.parse_span(tag);
-                    }
-                }
-                _ => {}
-            }
+        out.check_code(tag)?;
+        out.extract_language(tag.attributes())?;
+        let mut l_ptr = 0;
+        for child in tag.children().all(parser) {
+            out.visit_child(child, l_ptr);
         }
-
-
-        println!("{:#?}", out.extract_language(attr));
-
-        todo!()
+        Some(out)
     }
     fn check_code(&mut self, tag: &HTMLTag) -> Option<()> {
-        let is_code = tag.name().eq("code");
-        println!("is_code: {}", is_code);
-        None
+        if tag.name().eq("code") {}
+        Some(())
     }
 
     fn extract_language(&mut self, attr: &Attributes) -> Option<()> {
@@ -47,7 +39,22 @@ impl HighlightJs {
 
 
         println!("{:#?}", class);
-        None
+        Some(())
+    }
+
+    fn visit_child(&mut self, node: &Node, mut l_ptr: usize) -> Option<()> {
+        match node {
+            Node::Tag(v) => {
+                println!("tag: {:?}", v);
+            }
+            Node::Raw(v) => {
+                let text = v.as_utf8_str();
+                l_ptr += text.len();
+                self.code.push_str(&v.as_utf8_str());
+            }
+            Node::Comment(_) => {}
+        }
+        Some(())
     }
 }
 
@@ -55,4 +62,5 @@ impl HighlightJs {
 #[derive(Debug, Default)]
 pub struct HighlightJs {
     pub language: String,
+    pub code: String,
 }
