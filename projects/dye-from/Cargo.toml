@@ -12,6 +12,7 @@ edition = "2018"
 log = "0.4.17"
 tl = { version = "0.7.7", features = ["simd"] }
 regex = "1.7.0"
+diagnostic-quick = "0.0.0"
 
 [dependencies.color-span]
 #version = "0.0.0"

@@ -8,11 +8,13 @@ pub struct HtmlWriter {
     pub pre_block: Option<String>,
     /// add style
     pub style: Option<String>,
+    /// Prefix of class names
+    pub class_prefix: String,
 }
 
 impl Default for HtmlWriter {
     fn default() -> Self {
-        Self { pre_block: Some("highlight-block rust".to_string()), style: None }
+        Self { pre_block: Some("highlight-block rust".to_string()), style: None, class_prefix: "".to_string() }
     }
 }
 
