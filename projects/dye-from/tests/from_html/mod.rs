@@ -1,4 +1,4 @@
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 
 use diagnostic_quick::QResult;
 use tl::{HTMLTag, Node, parse, Parser, ParserOptions};
@@ -13,7 +13,8 @@ fn test() {
 
 #[derive(Debug, Default)]
 pub struct HighlightJs {
-    map: BTreeMap<String, String>,
+    drop_map: BTreeSet<String>,
+    class_map: BTreeMap<String, String>,
 }
 
 impl HighlightJs {
@@ -67,10 +68,13 @@ impl NodeContext<'_> {
         if !tag.name().eq("code") {}
         None
     }
-    fn extract_language(&mut self, tag: &HTMLTag) -> Option<()> {
-        let class = get_class(tag);
-        println!("{:#?}", class);
-        None
+    fn extract_language(&mut self, tag: &HTMLTag) {
+        for get_class in get_class(tag).split(' ') {
+            if get_class.starts_with("language-") {
+                self.language = get_class[9..].to_string();
+                return;
+            }
+        }
     }
     fn visit_children(&mut self, tag: &HTMLTag) -> Option<()> {
         let mut l_ptr = 0;
@@ -116,11 +120,15 @@ impl NodeContext<'_> {
     }
 
     fn split_class(&self, classes: &str) -> String {
+        if self.config.drop_map.contains(classes) {
+            return "".to_string();
+        }
         for class in classes.split(' ') {
             if class.starts_with("language") {
-                return String::new()
+                return String::new();
             }
-            if let Some(s) = self.config.map.get(class) { return s.to_string(); }
+
+            if let Some(s) = self.config.class_map.get(class) { return s.to_string(); }
         }
         println!("unknown classes: {}", classes);
         String::new()
@@ -153,42 +161,62 @@ impl HighlightJs {
         out
     }
     pub fn add_builtin(&mut self) {
-        self.insert_map("hljs-meta", "meta");
-        self.insert_map("hljs-keyword", "keyword");
-        self.insert_map("hljs-punctuation", "punctuation");
-        self.insert_map("hljs-operator", "operator");
+        self.insert_drop("hljs-title");
+        self.insert_drop("hljs-pattern-match"); // code span 不标记块
+
+        // 关键词
+        self.insert_rule("hljs-meta", "meta");
+        self.insert_rule("hljs-keyword", "keyword");
+        self.insert_rule("hljs-punctuation", "punctuation");
+        self.insert_rule("hljs-operator", "operator");
+
+        self.insert_rule("hljs-section", "markup-title");
+        self.insert_rule("hljs-bullet", "markup-bullet");
+
+
 
         // literal
-        self.insert_map("hljs-number", "number");
-        self.insert_map("hljs-symbol", "identifier");
-        self.insert_map("hljs-built_in", "builtin");
-        self.insert_map("hljs-attribute", "attribute"); // 实际表示键值对的键
-        self.insert_map("hljs-attr", "attribute");
-        self.insert_map("hljs-variable", "variable"); // 特制本地变量
-        self.insert_map("hljs-params", "argument"); // 实际上表示形参
-        self.insert_map("hljs-tag", ""); // 独指 XML/HTML 的标签
-        self.insert_map("hljs-name", "class"); // 独指 XML/HTML 的标签值, 以及某些变量名
+        self.insert_rule("hljs-module-access", "module"); // 带 . 的 module path
+        self.insert_rule("hljs-module", "module");
+
+        self.insert_rule("hljs-number", "number");
+        self.insert_rule("hljs-symbol", "identifier"); // 不明, 啥都可以是 symbol
+        self.insert_rule("hljs-identifier", "identifier");
+        self.insert_rule("hljs-built_in", "builtin");
+        self.insert_rule("hljs-attribute", "attribute"); // 实际表示键值对的键
+        self.insert_rule("hljs-attr", "attribute");
+        self.insert_rule("hljs-variable", "variable"); // 特制本地变量
+        self.insert_rule("hljs-params", "argument"); // 实际上表示形参
+
+        self.insert_rule("hljs-constructor", "variant"); // 实际上表示枚举构造函数
+
+        self.insert_rule("hljs-tag", ""); // 独指 XML/HTML 的标签
+        self.insert_rule("hljs-name", "class"); // 独指 XML/HTML 的标签值, 以及某些变量名
 
         //  hljs-subst 插值变量
-
+        self.insert_rule("hljs-property", "property"); // 对象属性
+        self.insert_rule("hljs-function", "function");
+        self.insert_rule("function_", "function");
 
         // typing
-        self.insert_map("hljs-type", "type");
-        self.insert_map("hljs-class", "class");
-        self.insert_map("class_", "class");
-        self.insert_map("hljs-function", "function");
-        self.insert_map("function_", "function");
+        self.insert_rule("hljs-type", "type");
+        self.insert_rule("hljs-class", "class");
+        self.insert_rule("class_", "class");
 
 
         // string-like
-        self.insert_map("hljs-string", "string");
-        self.insert_map("hljs-literal", "literal");
-        self.insert_map("hljs-quote", "literal"); // 指代大段文本, 没有 '' 包裹的那种
-        self.insert_map("hljs-link", "link"); // 指代 url, uri, email 等等
-        self.insert_map("hljs-comment", "comment");
+        self.insert_rule("hljs-string", "string");
+        self.insert_rule("escape_", "escape");
+        self.insert_rule("hljs-literal", "literal");
+        self.insert_rule("hljs-quote", "literal"); // 指代大段文本, 没有 '' 包裹的那种
+        self.insert_rule("hljs-link", "link"); // 指代 url, uri, email 等等
+        self.insert_rule("hljs-comment", "comment");
     }
-    pub fn insert_map(&mut self, js: impl Into<String>, class: impl Into<String>) {
-        self.map.insert(js.into(), class.into());
+    pub fn insert_rule(&mut self, js: impl Into<String>, class: impl Into<String>) {
+        self.class_map.insert(js.into(), class.into());
+    }
+    pub fn insert_drop(&mut self, js: impl Into<String>) {
+        self.drop_map.insert(js.into());
     }
 }
 
