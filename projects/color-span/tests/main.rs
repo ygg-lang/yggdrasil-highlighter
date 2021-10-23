@@ -4,7 +4,7 @@ use serde_json::from_str;
 
 use color_span::{
     html::{HtmlWriter, ONE_DARK},
-    ClassPalette,
+    Palette,
 };
 
 #[test]
@@ -14,7 +14,7 @@ fn ready() {
 
 #[test]
 pub fn test_deserialize() {
-    let mut view = ClassPalette::from("public static class G {}");
+    let mut view = Palette::from("public static class G {}");
     view.dye(0, 6, "keyword").ok();
     view.dye(7, 13, "keyword").ok();
     // assert_eq!(serde_json::to_string(&view).unwrap(), include_str!("keyword.json"));
@@ -26,7 +26,7 @@ pub fn test_html() {
     let mut html = HtmlWriter::default();
     html.style = Some(ONE_DARK.to_string());
     let mut out = "".to_string();
-    let mut view = ClassPalette::from("public static class G {}");
+    let mut view = Palette::from("public static class G {}");
     view.dye(0, 6, "keyword").ok();
     view.dye(7, 13, "keyword").ok();
     html.write_fmt(&mut out, &view).unwrap();

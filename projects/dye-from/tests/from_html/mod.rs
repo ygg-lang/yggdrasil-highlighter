@@ -3,7 +3,7 @@ use std::collections::{BTreeMap, BTreeSet};
 use diagnostic_quick::QResult;
 use tl::{HTMLTag, Node, parse, Parser, ParserOptions};
 
-use color_span::ClassPalette;
+use color_span::Palette;
 
 #[test]
 fn test() {
@@ -136,8 +136,8 @@ impl NodeContext<'_> {
 }
 
 impl NodeContext<'_> {
-    pub fn as_palette(&self) -> ClassPalette {
-        let mut palette = ClassPalette::from(&self.code);
+    pub fn as_palette(&self) -> Palette {
+        let mut palette = Palette::from(&self.code);
         for span in &self.span {
             palette.dye(span.start, span.end, &span.class).ok();
         }

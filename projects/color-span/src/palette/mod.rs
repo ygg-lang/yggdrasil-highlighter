@@ -20,19 +20,18 @@ mod iter;
 /// use color_span::TextView;
 /// ```
 #[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
-pub struct ClassPalette {
+pub struct Palette {
     classes: IndexSet<String>,
-    text: TextView,
 }
 
-impl ClassPalette {
+impl Palette {
     /// Get the current uncolored text
     ///
     /// # Examples
     ///
     /// ```
-    /// use color_span::ClassPalette;
-    /// let mut view = ClassPalette::from("public static class G {}");
+    /// use color_span::Palette;
+    /// let mut view = Palette::from("public static class G {}");
     /// view.get_text();
     /// ```
     #[inline]
@@ -45,8 +44,8 @@ impl ClassPalette {
     /// # Examples
     ///
     /// ```
-    /// use color_span::ClassPalette;
-    /// let mut view = ClassPalette::from("public static class G {}");
+    /// use color_span::Palette;
+    /// let mut view = Palette::from("public static class G {}");
     /// view.set_text("let mut a = 0");
     /// view.get_text();
     /// ```
@@ -60,8 +59,8 @@ impl ClassPalette {
     /// # Examples
     ///
     /// ```
-    /// use color_span::ClassPalette;
-    /// let view = ClassPalette::from("public static class G {}").with_text("let mut a = 0");
+    /// use color_span::Palette;
+    /// let view = Palette::from("public static class G {}").with_text("let mut a = 0");
     /// view.get_text();
     /// ```
     #[inline]
@@ -79,8 +78,8 @@ impl ClassPalette {
     /// # Examples
     ///
     /// ```
-    /// use color_span::ClassPalette;
-    /// let mut view = ClassPalette::from("public static class G {}");
+    /// use color_span::Palette;
+    /// let mut view = Palette::from("public static class G {}");
     /// view.dye(0, 6, "keyword").unwrap();
     /// ```
     pub fn dye(&mut self, start: usize, end: usize, color: &str) -> Result<u32, ColorSpanError> {

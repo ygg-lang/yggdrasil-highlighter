@@ -1,8 +1,8 @@
 use indexmap::IndexSet;
 
-use crate::{ClassPalette, TextView};
+use crate::{Palette, TextView};
 
-impl Default for ClassPalette {
+impl Default for Palette {
     fn default() -> Self {
         let mut classes = IndexSet::default();
         classes.insert("".to_string());
@@ -10,11 +10,11 @@ impl Default for ClassPalette {
     }
 }
 
-impl<T> From<T> for ClassPalette
+impl<T> From<T> for Palette
 where
     T: AsRef<str>,
 {
     fn from(value: T) -> Self {
-        ClassPalette::default().with_text(value.as_ref())
+        Palette::default().with_text(value.as_ref())
     }
 }

@@ -29,6 +29,7 @@ mod ser;
 /// ```
 #[derive(Clone, Ord, PartialOrd, Eq, PartialEq, Hash)]
 pub struct TextView {
+    map: IndexedText,
     characters: Vec<Character>,
 }
 

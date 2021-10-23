@@ -1,4 +1,4 @@
-use crate::{html::HtmlWriter, ClassPalette};
+use crate::{html::HtmlWriter, Palette};
 use std::fmt::{Arguments, Display, Formatter, Result, Write};
 
 impl HtmlWriter {
@@ -16,7 +16,7 @@ impl HtmlWriter {
     /// ```
     /// use color_span::HtmlWriter;
     /// ```
-    pub fn write_fmt(&self, writer: &mut impl Write, view: &ClassPalette) -> Result {
+    pub fn write_fmt(&self, writer: &mut impl Write, view: &Palette) -> Result {
         let mut w = FmtWriter { writer, config: self };
         w.write_style()?;
         w.pre_start()?;
