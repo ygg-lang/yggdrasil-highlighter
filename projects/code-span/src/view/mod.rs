@@ -1,35 +1,30 @@
 use std::ops::Range;
 
-use arc_interner::ArcIntern;
-use serde::{Deserialize, Serialize};
+use lsp_document::{IndexedText, TextMap};
 
-mod iter;
+// mod iter;
 
+/// # Arguments
 ///
-#[derive(Clone, Debug, Ord, PartialOrd, Eq, PartialEq, Hash, Serialize, Deserialize)]
-pub struct TextView<T> {
-    characters: Vec<CharacterInfo<T>>,
-}
-
+/// * `text`:
+/// * `default`:
 ///
-#[derive(Copy, Clone, Debug, Ord, PartialOrd, Eq, PartialEq, Hash, Serialize, Deserialize)]
-pub struct CharacterInfo<T> {
+/// returns: TextView<T>
+///
+/// # Examples
+///
+/// ```
+/// use code_span::CodeSpan;
+/// ```
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct CodeSpan<'i, T> {
     /// Raw character
-    pub char: char,
+    map: IndexedText<&'i str>,
     /// Information
-    pub info: Option<ArcIntern<T>>,
+    info: Vec<Option<T>>,
 }
 
-///
-#[derive(Clone, Debug, Ord, PartialOrd, Eq, PartialEq, Hash, Serialize, Deserialize)]
-pub struct CodeSpan<T> {
-    /// Raw character
-    pub text: String,
-    /// Information
-    pub info: Option<ArcIntern<T>>,
-}
-
-impl<T> TextView<T> {
+impl<'i, T> CodeSpan<'i, T> {
     /// # Arguments
     ///
     /// * `text`:
@@ -40,13 +35,15 @@ impl<T> TextView<T> {
     /// # Examples
     ///
     /// ```
-    /// use code_span::TextView;
+    /// use code_span::CodeSpan;
     /// ```
-    pub fn new(text: &str, default: Option<T>) -> TextView<T>
-        where
-            T: Clone,
+    pub fn new(text: &'i str) -> Self
+    where
+        T: Clone,
     {
-        Self { characters: text.chars().map(|c| CharacterInfo { char: c, info: default.clone() }).collect() }
+        let count = text.chars().count();
+        let map = IndexedText::new(text);
+        Self { map, info: vec![None; count] }
     }
     /// # Arguments
     ///
@@ -60,8 +57,8 @@ impl<T> TextView<T> {
     /// ```
     /// use code_span::TextView;
     /// ```
-    pub fn text(&self) -> String {
-        self.characters.iter().map(|c| c.char).collect()
+    pub fn text(&self) -> &str {
+        self.map.text()
     }
     /// # Arguments
     ///
@@ -76,15 +73,39 @@ impl<T> TextView<T> {
     /// ```
     /// use code_span::TextView;
     /// ```
-    pub fn mark(&mut self, start: usize, end: usize, info: Option<T>)
-        where
-            T: Clone,
+    pub fn mark_position(&mut self, start: usize, end: usize, info: Option<T>)
+    where
+        T: Clone,
     {
         debug_assert!(start <= end);
-        let end = self.characters.len().min(end);
-        let items = unsafe { self.characters.get_unchecked_mut(Range { start, end }) };
+        let end = self.info.len().min(end);
+        let items = unsafe { self.info.get_unchecked_mut(Range { start, end }) };
         for item in items {
-            item.info = info.clone()
+            *item = info.clone()
+        }
+    }
+    /// # Arguments
+    ///
+    /// * `start`:
+    /// * `end`:
+    /// * `info`:
+    ///
+    /// returns: ()
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use code_span::TextView;
+    /// ```
+    pub fn mark_offset(&mut self, start: usize, end: usize, info: Option<T>)
+    where
+        T: Clone,
+    {
+        debug_assert!(start <= end);
+        let end = self.info.len().min(end);
+        let items = unsafe { self.info.get_unchecked_mut(Range { start, end }) };
+        for item in items {
+            *item = info.clone()
         }
     }
 }

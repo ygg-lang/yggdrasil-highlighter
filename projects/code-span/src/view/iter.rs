@@ -40,7 +40,7 @@ where
                 let out = self.pop_span();
                 self.buffer.push(this.char);
                 self.current = this.info.clone();
-                if out.text.is_empty() {
+                if out.map.is_empty() {
                     continue;
                 }
                 else {
@@ -59,6 +59,6 @@ where
 {
     #[inline]
     fn pop_span(&mut self) -> CodeSpan<T> {
-        CodeSpan { text: take(&mut self.buffer), info: self.current.clone() }
+        CodeSpan { map: take(&mut self.buffer), info: self.current.clone() }
     }
 }

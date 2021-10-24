@@ -6,13 +6,8 @@
 #![doc = include_str!("../readme.md")]
 
 // mod errors;
-mod palette;
+// mod palette;
 mod view;
 // mod writer;
 //
-pub use self::{
-    // errors::ColorSpanError,
-    palette::HighlightClass,
-    view::{CharacterInfo, CodeSpan, TextView},
-    // writer::html::{self, HtmlWriter},
-};
+pub use self::view::CodeSpan;
