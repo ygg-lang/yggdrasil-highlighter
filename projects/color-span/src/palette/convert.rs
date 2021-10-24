@@ -1,12 +1,10 @@
 use indexmap::IndexSet;
 
-use crate::{Palette, TextView};
+use crate::Palette;
 
 impl Default for Palette {
     fn default() -> Self {
-        let mut classes = IndexSet::default();
-        classes.insert("".to_string());
-        Self { classes, text: TextView::new("") }
+        Self { classes: IndexSet::from_iter(vec!["".to_string()]) }
     }
 }
 

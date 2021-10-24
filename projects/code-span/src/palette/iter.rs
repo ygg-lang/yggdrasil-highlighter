@@ -1,19 +1,19 @@
-use crate::{view::iter::TextColorIter, Colored, Palette};
+use crate::{view::iter::TextColorIter, ClassPalette, Colored};
 use indexmap::IndexSet;
 
-/// Iter type for ClassPalette
+///
 #[derive(Debug)]
 pub struct ClassPaletteIter<'i> {
     map: &'i IndexSet<String>,
     text: TextColorIter<'i>,
 }
 
-impl<'i> IntoIterator for &'i Palette {
+impl<'i> IntoIterator for &'i ClassPalette {
     type Item = (String, String);
     type IntoIter = ClassPaletteIter<'i>;
 
     fn into_iter(self) -> Self::IntoIter {
-        ClassPaletteIter { map: &self.classes, text: self.into_iter() }
+        ClassPaletteIter { map: &self.classes, text: self.text.into_iter() }
     }
 }
 

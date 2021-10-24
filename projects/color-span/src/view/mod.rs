@@ -3,6 +3,7 @@ use std::{
     fmt::{Debug, Formatter},
     ops::Range,
 };
+use lsp_document::IndexedText;
 
 use crate::ColorSpanError;
 use serde::{Deserialize, Serialize};
@@ -29,7 +30,7 @@ mod ser;
 /// ```
 #[derive(Clone, Ord, PartialOrd, Eq, PartialEq, Hash)]
 pub struct TextView {
-    map: IndexedText,
+    map: IndexedText<String>,
     characters: Vec<Character>,
 }
 
@@ -68,7 +69,7 @@ impl TextView {
     /// ```
     pub fn new(text: &str) -> TextView {
         let white = text.chars().map(Character::from).collect();
-        Self { characters: white }
+        Self { map: IndexedText::new(text), characters: white }
     }
 
     /// Color the text in the range of `start`..`end` to given color name

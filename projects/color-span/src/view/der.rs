@@ -1,10 +1,13 @@
-use crate::TextView;
+use std::fmt::Formatter;
+
 use color_char::Character;
+use lsp_document::IndexedText;
 use serde::{
     de::{SeqAccess, Visitor},
     Deserialize, Deserializer,
 };
-use std::fmt::Formatter;
+
+use crate::TextView;
 
 struct TextViewSequence {}
 
@@ -28,7 +31,7 @@ impl<'de> Visitor<'de> for TextViewSequence {
     where
         A: SeqAccess<'de>,
     {
-        let mut out = TextView { characters: vec![] };
+        let mut out = TextView { map: IndexedText::new(String::new()), characters: vec![] };
         while let Some(repr) = seq.next_element::<u32>()? {
             out.characters.push(Character::from(repr));
         }
