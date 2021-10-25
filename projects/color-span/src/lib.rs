@@ -10,9 +10,4 @@ mod palette;
 mod view;
 mod writer;
 
-pub use self::{
-    errors::ColorSpanError,
-    palette::Palette,
-    view::{ColorView, Colored},
-    writer::html,
-};
+pub use self::{errors::ColorSpanError, palette::Palette, view::ColorView, writer::html};

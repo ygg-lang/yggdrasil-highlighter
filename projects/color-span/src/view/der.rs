@@ -1,6 +1,5 @@
 use std::fmt::Formatter;
 
-use color_char::Character;
 use serde::{
     de::{SeqAccess, Visitor},
     Deserialize, Deserializer,
@@ -30,7 +29,7 @@ impl<'de> Visitor<'de> for TextViewSequence {
     where
         A: SeqAccess<'de>,
     {
-        let mut out = ColorView { map: IndexedText::new(String::new()), characters: vec![] };
+        let mut out = ColorView { span: IndexedText::new(String::new()), characters: vec![] };
         while let Some(repr) = seq.next_element::<u32>()? {
             out.characters.push(Character::from(repr));
         }

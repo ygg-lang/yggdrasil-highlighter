@@ -12,8 +12,12 @@ exclude = ["*.json"]
 
 [dependencies]
 serde = { version = "1.0.147", features = ["derive"] }
-color-char = "0.2.0"
 indexmap = { version = "1.9.2", features = ["serde"] }
+internship = "0.6.0"
+
+[dependencies.code-span]
+#version = "0.1.0"
+path = "../code-span"
 
 [dev-dependencies]
 serde_json = "1.0.89"
