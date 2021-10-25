@@ -3,7 +3,8 @@ name = "dye-from"
 version = "0.0.0"
 authors = ["Aster <192607617@qq.com>"]
 description = "..."
-repository = "..."
+repository = "https://github.com/oovm/dyeware"
+documentation = "https://docs.rs/dye-from"
 readme = "Readme.md"
 license = "MPL-2.0"
 edition = "2018"
@@ -14,7 +15,7 @@ tl = { version = "0.7.7", features = ["simd"] }
 regex = "1.7.0"
 
 [dependencies.diagnostic-quick]
-version = "0.1.0"
+version = "0.2.3"
 features = ["tl"]
 
 [dependencies.color-span]

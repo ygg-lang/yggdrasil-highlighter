@@ -1,9 +1,9 @@
 [package]
 name = "color-span"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["Aster <192607617@qq.com>"]
 description = "Color shared definition"
-repository = "https://github.com/oovm/color-rs"
+repository = "https://github.com/oovm/dyeware"
 documentation = "https://docs.rs/color-span"
 readme = "Readme.md"
 license = "MPL-2.0"
@@ -11,7 +11,7 @@ edition = "2021"
 exclude = ["*.json"]
 
 [dependencies]
-serde = { version = "1.0.147", features = ["derive"] }
+serde = { version = "1.0.148", features = ["derive"] }
 indexmap = { version = "1.9.2", features = ["serde"] }
 internship = "0.6.0"
 
