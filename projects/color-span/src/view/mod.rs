@@ -3,9 +3,9 @@ use std::{
     fmt::{Debug, Formatter},
     ops::Range,
 };
-use lsp_document::IndexedText;
 
 use crate::ColorSpanError;
+use code_span::CodeSpan;
 use serde::{Deserialize, Serialize};
 
 mod convert;
@@ -29,8 +29,8 @@ mod ser;
 /// use color_span::ColorClass;
 /// ```
 #[derive(Clone, Ord, PartialOrd, Eq, PartialEq, Hash)]
-pub struct TextView {
-    map: IndexedText<String>,
+pub struct ColorView {
+    map: IndexSet<String>,
     characters: Vec<Character>,
 }
 
@@ -55,7 +55,7 @@ pub struct Colored<T> {
     pub color: u32,
 }
 
-impl TextView {
+impl ColorView {
     /// # Arguments
     ///
     /// * `text`:
@@ -65,9 +65,9 @@ impl TextView {
     /// # Examples
     ///
     /// ```
-    /// use color_span::TextView;
+    /// use color_span::ColorView;
     /// ```
-    pub fn new(text: &str) -> TextView {
+    pub fn new(text: &str) -> ColorView {
         let white = text.chars().map(Character::from).collect();
         Self { map: IndexedText::new(text), characters: white }
     }
@@ -83,7 +83,7 @@ impl TextView {
     /// # Examples
     ///
     /// ```
-    /// use color_span::TextView;
+    /// use color_span::ColorView;
     /// ```
     pub fn dye(&mut self, start: usize, end: usize, color: u32) -> Result<(), ColorSpanError> {
         match self.characters.get_mut(Range { start, end }) {
@@ -103,7 +103,7 @@ impl TextView {
     /// # Examples
     ///
     /// ```
-    /// use color_span::TextView;
+    /// use color_span::ColorView;
     /// ```
     pub fn text(&self) -> String {
         self.characters.iter().map(|s| s.get_char()).collect()

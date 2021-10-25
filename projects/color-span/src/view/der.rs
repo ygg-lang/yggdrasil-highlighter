@@ -1,17 +1,16 @@
 use std::fmt::Formatter;
 
 use color_char::Character;
-use lsp_document::IndexedText;
 use serde::{
     de::{SeqAccess, Visitor},
     Deserialize, Deserializer,
 };
 
-use crate::TextView;
+use crate::ColorView;
 
 struct TextViewSequence {}
 
-impl<'de> Deserialize<'de> for TextView {
+impl<'de> Deserialize<'de> for ColorView {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: Deserializer<'de>,
@@ -21,7 +20,7 @@ impl<'de> Deserialize<'de> for TextView {
 }
 
 impl<'de> Visitor<'de> for TextViewSequence {
-    type Value = TextView;
+    type Value = ColorView;
 
     fn expecting(&self, formatter: &mut Formatter) -> std::fmt::Result {
         formatter.write_str("Expect `[u32]`")
@@ -31,7 +30,7 @@ impl<'de> Visitor<'de> for TextViewSequence {
     where
         A: SeqAccess<'de>,
     {
-        let mut out = TextView { map: IndexedText::new(String::new()), characters: vec![] };
+        let mut out = ColorView { map: IndexedText::new(String::new()), characters: vec![] };
         while let Some(repr) = seq.next_element::<u32>()? {
             out.characters.push(Character::from(repr));
         }

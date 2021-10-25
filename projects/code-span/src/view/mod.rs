@@ -1,8 +1,7 @@
 use std::ops::Range;
 
-use lsp_document::{IndexedText, TextMap};
-
 // mod iter;
+mod convert;
 
 /// # Arguments
 ///
@@ -16,15 +15,13 @@ use lsp_document::{IndexedText, TextMap};
 /// ```
 /// use code_span::CodeSpan;
 /// ```
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub struct CodeSpan<'i, T> {
-    /// Raw character
-    map: IndexedText<&'i str>,
-    /// Information
+#[derive(Clone, Eq, PartialEq)]
+pub struct CodeSpan<T> {
+    text: String,
     info: Vec<Option<T>>,
 }
 
-impl<'i, T> CodeSpan<'i, T> {
+impl<T> CodeSpan<T> {
     /// # Arguments
     ///
     /// * `text`:
@@ -37,13 +34,13 @@ impl<'i, T> CodeSpan<'i, T> {
     /// ```
     /// use code_span::CodeSpan;
     /// ```
-    pub fn new(text: &'i str) -> Self
+    pub fn new(text: impl Into<String>) -> Self
     where
         T: Clone,
     {
+        let text = text.into();
         let count = text.chars().count();
-        let map = IndexedText::new(text);
-        Self { map, info: vec![None; count] }
+        Self { text, info: vec![None; count] }
     }
     /// # Arguments
     ///
@@ -55,10 +52,11 @@ impl<'i, T> CodeSpan<'i, T> {
     /// # Examples
     ///
     /// ```
-    /// use code_span::TextView;
+    /// use code_span::CodeSpan;
     /// ```
+    #[inline]
     pub fn text(&self) -> &str {
-        self.map.text()
+        &self.text
     }
     /// # Arguments
     ///
@@ -71,7 +69,7 @@ impl<'i, T> CodeSpan<'i, T> {
     /// # Examples
     ///
     /// ```
-    /// use code_span::TextView;
+    /// use code_span::CodeSpan;
     /// ```
     pub fn mark_position(&mut self, start: usize, end: usize, info: Option<T>)
     where
@@ -95,17 +93,16 @@ impl<'i, T> CodeSpan<'i, T> {
     /// # Examples
     ///
     /// ```
-    /// use code_span::TextView;
+    /// use code_span::CodeSpan;
     /// ```
+    #[inline]
     pub fn mark_offset(&mut self, start: usize, end: usize, info: Option<T>)
     where
         T: Clone,
     {
-        debug_assert!(start <= end);
-        let end = self.info.len().min(end);
-        let items = unsafe { self.info.get_unchecked_mut(Range { start, end }) };
-        for item in items {
-            *item = info.clone()
-        }
+        let end = self.text.len().min(end);
+        let start = self.text[..start].chars().count();
+        let end = start + self.text[start..end].chars().count();
+        self.mark_position(start, end, info)
     }
 }

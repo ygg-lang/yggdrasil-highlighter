@@ -13,6 +13,6 @@ mod writer;
 pub use self::{
     errors::ColorSpanError,
     palette::Palette,
-    view::{Colored, TextView},
+    view::{ColorView, Colored},
     writer::html,
 };

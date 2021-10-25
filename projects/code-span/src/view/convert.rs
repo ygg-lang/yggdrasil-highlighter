@@ -1,19 +1,27 @@
+use std::fmt::{Debug, Formatter};
+
 use super::*;
 
-impl Debug for TextView {
+impl<T> Debug for CodeSpan<T> {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        f.debug_tuple("ColoredText").field(&self.text()).finish()
+        f.debug_tuple("CodeSpan").field(&self.text).finish()
     }
 }
 
-impl From<&str> for TextView {
+impl<T> From<&str> for CodeSpan<T>
+where
+    T: Clone,
+{
     fn from(s: &str) -> Self {
-        TextView::new(s)
+        CodeSpan::new(s)
     }
 }
 
-impl From<String> for TextView {
+impl<T> From<String> for CodeSpan<T>
+where
+    T: Clone,
+{
     fn from(s: String) -> Self {
-        TextView::new(&s)
+        CodeSpan::new(s)
     }
 }

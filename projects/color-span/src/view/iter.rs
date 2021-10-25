@@ -1,4 +1,4 @@
-use crate::{Colored, TextView};
+use crate::{ColorView, Colored};
 use color_char::Character;
 use std::{iter::Peekable, mem::take, slice::Iter};
 
@@ -10,7 +10,7 @@ pub struct TextColorIter<'i> {
     buffer: String,
 }
 
-impl<'i> IntoIterator for &'i TextView {
+impl<'i> IntoIterator for &'i ColorView {
     type Item = Colored<String>;
     type IntoIter = TextColorIter<'i>;
 

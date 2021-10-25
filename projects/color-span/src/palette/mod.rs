@@ -1,7 +1,7 @@
 use indexmap::IndexSet;
 use serde::{Deserialize, Serialize};
 
-use crate::{ColorSpanError, TextView};
+use crate::{ColorSpanError, ColorView};
 
 mod convert;
 mod iter;
@@ -17,7 +17,7 @@ mod iter;
 /// # Examples
 ///
 /// ```
-/// use color_span::TextView;
+/// use color_span::ColorView;
 /// ```
 #[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
 pub struct Palette {
@@ -51,7 +51,7 @@ impl Palette {
     /// ```
     #[inline]
     pub fn set_text(&mut self, text: &str) {
-        self.text = TextView::new(text);
+        self.text = ColorView::new(text);
     }
     /// Create a new [`ClassPalette`] with given text
     ///
@@ -65,7 +65,7 @@ impl Palette {
     /// ```
     #[inline]
     pub fn with_text(self, text: &str) -> Self {
-        Self { classes: self.classes, text: TextView::new(text) }
+        Self { classes: self.classes, text: ColorView::new(text) }
     }
     /// Tint the texts in the range to the specified color
     ///
