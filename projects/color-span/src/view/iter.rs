@@ -1,56 +1,38 @@
-use crate::ColorView;
 use internship::IStr;
-use std::{iter::Peekable, mem::take, slice::Iter};
 
+use code_span::CodeViewIter;
+
+use crate::{view::ColorSpan, ColorView};
+/// # Arguments
+///
+/// * `text`:
+///
+/// returns: TextColorView
+///
+/// # Examples
+///
+/// ```
+/// use color_span::ColorView;
+/// ```
 #[derive(Debug)]
-pub struct TextColorIter<'i> {
-    run_out: bool,
-    current_color_id: u32,
-    text: Peekable<Iter<'i, Character>>,
-    buffer: String,
+pub struct ColorViewIter<'i> {
+    iter: CodeViewIter<'i, IStr>,
 }
 
 impl<'i> IntoIterator for &'i ColorView {
-    type Item = IStr;
-    type IntoIter = TextColorIter<'i>;
+    type Item = ColorSpan;
+    type IntoIter = ColorViewIter<'i>;
 
     fn into_iter(self) -> Self::IntoIter {
-        TextColorIter { run_out: false, current_color_id: 0, text: self.characters.iter().peekable(), buffer: "".to_string() }
+        ColorViewIter { iter: self.span.into_iter() }
     }
 }
 
-impl Iterator for TextColorIter<'_> {
-    type Item = Colored<String>;
+impl Iterator for ColorViewIter<'_> {
+    type Item = ColorSpan;
 
     fn next(&mut self) -> Option<Self::Item> {
-        if self.run_out {
-            return None;
-        }
-        while let Some(this) = self.text.next() {
-            let char = this;
-            if char.get_color() == self.current_color_id {
-                self.buffer.push(char.get_char());
-                continue;
-            }
-            else {
-                let out = self.pop_span();
-                self.buffer.push(char.get_char());
-                self.current_color_id = char.get_color();
-                if out.value.is_empty() {
-                    continue;
-                }
-                else {
-                    return Some(out);
-                }
-            }
-        }
-        self.run_out = true;
-        Some(self.pop_span())
-    }
-}
-
-impl TextColorIter<'_> {
-    fn pop_span(&mut self) -> Colored<String> {
-        Colored { color: self.current_color_id, value: take(&mut self.buffer) }
+        let item = self.iter.next()?;
+        Some(ColorSpan { color: item.info.unwrap_or_default(), text: item.text })
     }
 }

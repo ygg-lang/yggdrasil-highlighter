@@ -1,4 +1,5 @@
 use super::*;
+use std::fmt::Formatter;
 
 impl Debug for ColorView {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {

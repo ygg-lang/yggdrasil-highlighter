@@ -2,12 +2,11 @@ use std::fmt::Debug;
 
 use internship::IStr;
 
-use arc_interner::ArcIntern;
-use code_span::CodeSpan;
+use code_span::CodeView;
 
-// mod convert;
+mod convert;
 // mod der;
-// pub mod iter;
+pub mod iter;
 // mod ser;
 
 /// Write color palette into html
@@ -25,12 +24,22 @@ use code_span::CodeSpan;
 /// ```
 /// use color_span::ColorClass;
 /// ```
-#[derive(Clone, Ord, PartialOrd, Eq, PartialEq, Hash)]
+#[derive(Clone, Eq, PartialEq)]
 pub struct ColorView {
-    span: CodeSpan<IStr>,
+    span: CodeView<IStr>,
 }
-
-#[derive(Clone, Ord, PartialOrd, Eq, PartialEq, Hash)]
+/// # Arguments
+///
+/// * `text`:
+///
+/// returns: TextColorView
+///
+/// # Examples
+///
+/// ```
+/// use color_span::ColorView;
+/// ```
+#[derive(Debug, Clone, Ord, PartialOrd, Eq, PartialEq, Hash)]
 pub struct ColorSpan {
     color: IStr,
     text: String,
@@ -50,7 +59,7 @@ impl ColorView {
     /// ```
     #[inline]
     pub fn new(text: impl Into<String>) -> ColorView {
-        Self { span: CodeSpan::new(text) }
+        Self { span: CodeView::new(text) }
     }
     /// Color the text in the range of `start`..`end` to given color name
     ///

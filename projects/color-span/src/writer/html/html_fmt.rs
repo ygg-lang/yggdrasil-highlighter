@@ -1,4 +1,4 @@
-use crate::{html::HtmlWriter, Palette};
+use crate::html::HtmlWriter;
 use std::fmt::{Arguments, Display, Formatter, Result, Write};
 
 impl HtmlWriter {
@@ -16,7 +16,7 @@ impl HtmlWriter {
     /// ```
     /// use color_span::HtmlWriter;
     /// ```
-    pub fn write_fmt(&self, writer: &mut impl Write, view: &Palette) -> Result {
+    pub fn write_fmt(&self, writer: &mut impl Write) -> Result {
         let mut w = FmtWriter { writer, config: self };
         w.write_style()?;
         w.pre_start()?;
@@ -98,7 +98,7 @@ impl Display for HtmlText<'_> {
                 ' ' if self.pre => f.write_char(c)?,
                 ' ' => f.write_str("&nbsp;")?,
                 // drop CR
-                '\r' => {},
+                '\r' => {}
                 // write LF
                 '\n' if self.pre => f.write_char(c)?,
                 '\n' => f.write_str("<br/>")?,

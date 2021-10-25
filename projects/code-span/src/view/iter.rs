@@ -1,27 +1,41 @@
-use crate::view::{CharacterInfo, CodeSpan, TextView};
-use std::{mem::take, slice::Iter};
+use std::{iter::Zip, mem::take, slice::Iter, str::Chars};
 
+use crate::{view::CodeView, CodeSpan};
+
+/// # Arguments
+///
+/// * `text`:
+/// * `default`:
+///
+/// returns: TextView<T>
+///
+/// # Examples
+///
+/// ```
+/// use code_span::CodeView;
+/// ```
 #[derive(Debug)]
-pub struct TextViewIter<'i, T> {
-    text: Iter<'i, CharacterInfo<T>>,
+pub struct CodeViewIter<'i, T> {
+    iter: Zip<Iter<'i, Option<T>>, Chars<'i>>,
     current: Option<T>,
     buffer: String,
     run_out: bool,
 }
 
-impl<'i, T> IntoIterator for &'i TextView<T>
+impl<'i, T> IntoIterator for &'i CodeView<T>
 where
     T: Clone + PartialEq,
 {
     type Item = CodeSpan<T>;
-    type IntoIter = TextViewIter<'i, T>;
+    type IntoIter = CodeViewIter<'i, T>;
 
     fn into_iter(self) -> Self::IntoIter {
-        TextViewIter { run_out: false, current: None, text: self.characters.iter(), buffer: "".to_string() }
+        let iter = self.info.iter().zip(self.text.chars());
+        CodeViewIter { run_out: false, current: None, iter, buffer: "".to_string() }
     }
 }
 
-impl<'i, T> Iterator for TextViewIter<'i, T>
+impl<'i, T> Iterator for CodeViewIter<'i, T>
 where
     T: Clone + PartialEq,
 {
@@ -31,16 +45,16 @@ where
         if self.run_out {
             return None;
         }
-        while let Some(this) = self.text.next() {
-            if this.info == self.current {
-                self.buffer.push(this.char);
+        while let Some(this) = self.iter.next() {
+            if self.current.eq(this.0) {
+                self.buffer.push(this.1);
                 continue;
             }
             else {
                 let out = self.pop_span();
-                self.buffer.push(this.char);
-                self.current = this.info.clone();
-                if out.map.is_empty() {
+                self.buffer.push(this.1);
+                self.current = this.0.clone();
+                if out.text.is_empty() {
                     continue;
                 }
                 else {
@@ -53,12 +67,12 @@ where
     }
 }
 
-impl<'i, T> TextViewIter<'i, T>
+impl<'i, T> CodeViewIter<'i, T>
 where
     T: Clone,
 {
     #[inline]
     fn pop_span(&mut self) -> CodeSpan<T> {
-        CodeSpan { map: take(&mut self.buffer), info: self.current.clone() }
+        CodeSpan { text: take(&mut self.buffer), info: self.current.clone() }
     }
 }

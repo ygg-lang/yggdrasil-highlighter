@@ -5,9 +5,12 @@
 #![doc = include_str!("../readme.md")]
 #![doc(html_logo_url = "https://raw.githubusercontent.com/oovm/color-rs/dev/.github/assets/rainbow.png")]
 
+pub use self::{
+    errors::ColorSpanError,
+    view::{iter::ColorViewIter, ColorSpan, ColorView},
+};
+
 mod errors;
 mod palette;
 mod view;
-mod writer;
-
-pub use self::{errors::ColorSpanError, palette::Palette, view::ColorView, writer::html};
+// mod writer;

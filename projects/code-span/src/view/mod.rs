@@ -1,7 +1,7 @@
 use std::ops::Range;
 
-// mod iter;
 mod convert;
+pub mod iter;
 
 /// # Arguments
 ///
@@ -13,15 +13,35 @@ mod convert;
 /// # Examples
 ///
 /// ```
-/// use code_span::CodeSpan;
+/// use code_span::CodeView;
 /// ```
 #[derive(Clone, Eq, PartialEq)]
-pub struct CodeSpan<T> {
+pub struct CodeView<T> {
     text: String,
     info: Vec<Option<T>>,
 }
 
-impl<T> CodeSpan<T> {
+/// # Arguments
+///
+/// * `text`:
+/// * `default`:
+///
+/// returns: TextView<T>
+///
+/// # Examples
+///
+/// ```
+/// use code_span::CodeView;
+/// ```
+#[derive(Debug, Clone, Eq, PartialEq)]
+pub struct CodeSpan<T> {
+    /// text
+    pub text: String,
+    /// info
+    pub info: Option<T>,
+}
+
+impl<T> CodeView<T> {
     /// # Arguments
     ///
     /// * `text`:
@@ -32,7 +52,7 @@ impl<T> CodeSpan<T> {
     /// # Examples
     ///
     /// ```
-    /// use code_span::CodeSpan;
+    /// use code_span::CodeView;
     /// ```
     pub fn new(text: impl Into<String>) -> Self
     where
@@ -52,7 +72,7 @@ impl<T> CodeSpan<T> {
     /// # Examples
     ///
     /// ```
-    /// use code_span::CodeSpan;
+    /// use code_span::CodeView;
     /// ```
     #[inline]
     pub fn text(&self) -> &str {
@@ -69,7 +89,7 @@ impl<T> CodeSpan<T> {
     /// # Examples
     ///
     /// ```
-    /// use code_span::CodeSpan;
+    /// use code_span::CodeView;
     /// ```
     pub fn mark_position(&mut self, start: usize, end: usize, info: Option<T>)
     where
@@ -93,7 +113,7 @@ impl<T> CodeSpan<T> {
     /// # Examples
     ///
     /// ```
-    /// use code_span::CodeSpan;
+    /// use code_span::CodeView;
     /// ```
     #[inline]
     pub fn mark_offset(&mut self, start: usize, end: usize, info: Option<T>)
