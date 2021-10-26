@@ -13,7 +13,7 @@ where
     T: Clone,
 {
     fn from(s: &str) -> Self {
-        CodeView::new(s)
+        CodeView::empty(s)
     }
 }
 
@@ -22,6 +22,6 @@ where
     T: Clone,
 {
     fn from(s: String) -> Self {
-        CodeView::new(s)
+        CodeView::empty(s)
     }
 }

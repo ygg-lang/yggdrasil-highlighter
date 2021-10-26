@@ -1,5 +1,6 @@
-use serde::{Deserialize, Serialize};
 use std::ops::Range;
+
+use serde::{Deserialize, Serialize};
 
 mod convert;
 pub mod iter;
@@ -55,13 +56,17 @@ impl<T> CodeView<T> {
     /// ```
     /// use code_span::CodeView;
     /// ```
-    pub fn new(text: impl Into<String>) -> Self
+    pub fn empty(text: impl Into<String>) -> Self
     where
         T: Clone,
     {
         let text = text.into();
         let count = text.chars().count();
         Self { text, info: vec![None; count] }
+    }
+    pub fn new(text: String, info: Vec<T>) -> Self {
+        assert_eq!(text.chars().count(), info.len());
+        Self { text, info }
     }
     /// # Arguments
     ///
@@ -76,9 +81,61 @@ impl<T> CodeView<T> {
     /// use code_span::CodeView;
     /// ```
     #[inline]
-    pub fn text(&self) -> &str {
+    pub fn get_text(&self) -> &str {
         &self.text
     }
+    /// # Arguments
+    ///
+    /// * `start`:
+    /// * `end`:
+    /// * `info`:
+    ///
+    /// returns: ()
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use code_span::CodeView;
+    /// ```
+    #[inline]
+    pub fn mut_text(&mut self) -> &mut String {
+        &mut self.text
+    }
+    /// # Arguments
+    ///
+    /// * `start`:
+    /// * `end`:
+    /// * `info`:
+    ///
+    /// returns: ()
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use code_span::CodeView;
+    /// ```
+    #[inline]
+    pub fn get_info(&self) -> &[Option<T>] {
+        &self.info
+    }
+    /// # Arguments
+    ///
+    /// * `start`:
+    /// * `end`:
+    /// * `info`:
+    ///
+    /// returns: ()
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use code_span::CodeView;
+    /// ```
+    #[inline]
+    pub fn mut_info(&mut self) -> &mut [Option<T>] {
+        &mut self.info
+    }
+
     /// # Arguments
     ///
     /// * `start`:
@@ -121,6 +178,7 @@ impl<T> CodeView<T> {
     where
         T: Clone,
     {
+        debug_assert!(start <= end);
         let end = self.text.len().min(end);
         let start = self.text[..start].chars().count();
         let end = start + self.text[start..end].chars().count();

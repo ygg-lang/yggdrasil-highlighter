@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 use code_span::CodeView;
 
 mod convert;
-// mod der;
+mod der;
 pub mod iter;
 mod ser;
 
@@ -25,10 +25,11 @@ mod ser;
 /// ```
 /// use color_span::ColorClass;
 /// ```
-#[derive(Clone, Eq, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Eq, PartialEq, Deserialize)]
 pub struct ColorView {
     span: CodeView<IStr>,
 }
+
 /// # Arguments
 ///
 /// * `text`:
@@ -60,7 +61,7 @@ impl ColorView {
     /// ```
     #[inline]
     pub fn new(text: impl Into<String>) -> ColorView {
-        Self { span: CodeView::new(text) }
+        Self { span: CodeView::empty(text) }
     }
     /// Color the text in the range of `start`..`end` to given color name
     ///
@@ -76,7 +77,7 @@ impl ColorView {
     /// use color_span::ColorView;
     /// ```
     pub fn text(&self) -> &str {
-        self.span.text()
+        self.span.get_text()
     }
     /// Color the text in the range of `start`..`end` to given color name
     ///
