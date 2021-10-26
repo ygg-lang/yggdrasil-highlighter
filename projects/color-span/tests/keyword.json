@@ -1,7 +1,9 @@
 {
-    "classes": ["", "keyword"],
-    "text": [
-        2097264, 2097269, 2097250, 2097260, 2097257, 2097251, 32, 2097267, 2097268, 2097249, 2097268, 2097257, 2097251,
-        32, 99, 108, 97, 115, 115, 32, 71, 32, 123, 125
-    ]
+    "span": {
+        "text": "public static class G {}",
+        "info": [
+            "keyword", "keyword", "keyword", "keyword", "keyword", "keyword", null, "keyword", "keyword", "keyword",
+            "keyword", "keyword", "keyword", null, null, null, null, null, null, null, null, null, null, null
+        ]
+    }
 }

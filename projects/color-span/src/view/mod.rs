@@ -1,13 +1,14 @@
 use std::fmt::Debug;
 
 use internship::IStr;
+use serde::{Deserialize, Serialize};
 
 use code_span::CodeView;
 
 mod convert;
 // mod der;
 pub mod iter;
-// mod ser;
+mod ser;
 
 /// Write color palette into html
 ///
@@ -24,7 +25,7 @@ pub mod iter;
 /// ```
 /// use color_span::ColorClass;
 /// ```
-#[derive(Clone, Eq, PartialEq)]
+#[derive(Clone, Eq, PartialEq, Serialize, Deserialize)]
 pub struct ColorView {
     span: CodeView<IStr>,
 }

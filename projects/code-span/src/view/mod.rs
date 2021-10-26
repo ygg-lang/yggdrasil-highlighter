@@ -1,3 +1,4 @@
+use serde::{Deserialize, Serialize};
 use std::ops::Range;
 
 mod convert;
@@ -15,7 +16,7 @@ pub mod iter;
 /// ```
 /// use code_span::CodeView;
 /// ```
-#[derive(Clone, Eq, PartialEq)]
+#[derive(Clone, Eq, PartialEq, Serialize, Deserialize)]
 pub struct CodeView<T> {
     text: String,
     info: Vec<Option<T>>,
@@ -33,7 +34,7 @@ pub struct CodeView<T> {
 /// ```
 /// use code_span::CodeView;
 /// ```
-#[derive(Debug, Clone, Eq, PartialEq)]
+#[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
 pub struct CodeSpan<T> {
     /// text
     pub text: String,
