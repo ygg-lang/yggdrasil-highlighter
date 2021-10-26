@@ -1,9 +1,12 @@
 use std::fmt::Formatter;
 
+use internship::IStr;
 use serde::{
-    de::{IgnoredAny, MapAccess, SeqAccess, Visitor},
+    de::{IgnoredAny, MapAccess, Visitor},
     Deserialize, Deserializer,
 };
+
+use code_span::CodeView;
 
 use crate::ColorView;
 
@@ -22,18 +25,7 @@ impl<'de> Visitor<'de> for ColorViewMap {
     type Value = ColorView;
 
     fn expecting(&self, formatter: &mut Formatter) -> std::fmt::Result {
-        formatter.write_str("Expect `[u32]`")
-    }
-
-    fn visit_seq<A>(self, mut seq: A) -> Result<Self::Value, A::Error>
-    where
-        A: SeqAccess<'de>,
-    {
-        let mut out = ColorView { span: IndexedText::new(String::new()), characters: vec![] };
-        while let Some(repr) = seq.next_element::<u32>()? {
-            out.characters.push(Character::from(repr));
-        }
-        Ok(out)
+        formatter.write_str("Expect `ColorView` object")
     }
 
     fn visit_map<A>(self, mut map: A) -> Result<Self::Value, A::Error>
@@ -42,19 +34,25 @@ impl<'de> Visitor<'de> for ColorViewMap {
     {
         let mut text = String::new();
         let mut colors = vec![];
-        let mut bits: Vec<u8> = vec![];
+        let mut bits = vec![];
 
-        while let Some(key) = map.next_key::<&str>() {
+        while let Some(key) = map.next_key::<&str>()? {
             match key {
                 "text" => text = map.next_value()?,
-                "colors" => colors = map.next_value()?,
-                "bits" => bits = map.next_value()?,
+                "colors" => colors = map.next_value::<Vec<String>>()?,
+                "bits" => bits = map.next_value::<Vec<u8>>()?,
                 _ => {
                     map.next_value::<IgnoredAny>()?;
                 }
             }
         }
+        let mut info = Vec::with_capacity(bits.len());
+        for bit in bits {
+            info.push(colors.get(bit as usize).map(|v| IStr::new(v)));
+        }
 
-        Ok(ColorView { span: () })
+        Ok(ColorView {
+            span: CodeView::new(text, bits.into_iter().map(|v| colors.get(v as usize).map(|v| IStr::new(v))).collect()),
+        })
     }
 }

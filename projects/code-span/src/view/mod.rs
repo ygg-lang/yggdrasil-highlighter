@@ -17,7 +17,7 @@ pub mod iter;
 /// ```
 /// use code_span::CodeView;
 /// ```
-#[derive(Clone, Eq, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
 pub struct CodeView<T> {
     text: String,
     info: Vec<Option<T>>,
@@ -56,7 +56,7 @@ impl<T> CodeView<T> {
     /// ```
     /// use code_span::CodeView;
     /// ```
-    pub fn empty(text: impl Into<String>) -> Self
+    pub fn blank(text: impl Into<String>) -> Self
     where
         T: Clone,
     {
@@ -64,7 +64,19 @@ impl<T> CodeView<T> {
         let count = text.chars().count();
         Self { text, info: vec![None; count] }
     }
-    pub fn new(text: String, info: Vec<T>) -> Self {
+    /// # Arguments
+    ///
+    /// * `text`:
+    /// * `default`:
+    ///
+    /// returns: TextView<T>
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use code_span::CodeView;
+    /// ```
+    pub fn new(text: String, info: Vec<Option<T>>) -> Self {
         assert_eq!(text.chars().count(), info.len());
         Self { text, info }
     }

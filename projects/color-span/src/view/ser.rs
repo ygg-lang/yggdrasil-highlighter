@@ -1,9 +1,6 @@
 use std::collections::BTreeSet;
 
-use serde::{
-    ser::{SerializeSeq, SerializeStruct},
-    Serialize, Serializer,
-};
+use serde::{ser::SerializeStruct, Serialize, Serializer};
 
 use crate::ColorView;
 

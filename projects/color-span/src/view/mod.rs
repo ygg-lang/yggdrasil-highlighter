@@ -25,7 +25,7 @@ mod ser;
 /// ```
 /// use color_span::ColorClass;
 /// ```
-#[derive(Clone, Eq, PartialEq, Deserialize)]
+#[derive(Debug, Clone, Eq, PartialEq)]
 pub struct ColorView {
     span: CodeView<IStr>,
 }
@@ -41,7 +41,7 @@ pub struct ColorView {
 /// ```
 /// use color_span::ColorView;
 /// ```
-#[derive(Debug, Clone, Ord, PartialOrd, Eq, PartialEq, Hash)]
+#[derive(Debug, Clone, Ord, PartialOrd, Eq, PartialEq, Hash, Serialize, Deserialize)]
 pub struct ColorSpan {
     color: IStr,
     text: String,
@@ -61,7 +61,7 @@ impl ColorView {
     /// ```
     #[inline]
     pub fn new(text: impl Into<String>) -> ColorView {
-        Self { span: CodeView::empty(text) }
+        Self { span: CodeView::blank(text) }
     }
     /// Color the text in the range of `start`..`end` to given color name
     ///

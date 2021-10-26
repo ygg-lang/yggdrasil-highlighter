@@ -1,5 +1,3 @@
-use std::{fs::File, io::Write};
-
 use color_span::ColorView;
 use serde_json::from_str;
 
