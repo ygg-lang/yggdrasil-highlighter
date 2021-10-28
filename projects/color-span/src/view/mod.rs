@@ -43,8 +43,10 @@ pub struct ColorView {
 /// ```
 #[derive(Debug, Clone, Ord, PartialOrd, Eq, PartialEq, Hash, Serialize, Deserialize)]
 pub struct ColorSpan {
-    color: IStr,
-    text: String,
+    /// content of the code span
+    pub text: String,
+    /// color class of the code span
+    pub color: IStr,
 }
 
 impl ColorView {

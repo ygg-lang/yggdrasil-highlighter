@@ -1,4 +1,4 @@
-use crate::html::HtmlWriter;
+use crate::{html::HtmlWriter, ColorView};
 use std::fmt::{Arguments, Display, Formatter, Result, Write};
 
 impl HtmlWriter {
@@ -16,12 +16,12 @@ impl HtmlWriter {
     /// ```
     /// use color_span::HtmlWriter;
     /// ```
-    pub fn write_fmt(&self, writer: &mut impl Write) -> Result {
+    pub fn write_fmt(&self, writer: &mut impl Write, view: &ColorView) -> Result {
         let mut w = FmtWriter { writer, config: self };
         w.write_style()?;
         w.pre_start()?;
-        for (class, text) in view {
-            w.write_span(&class, HtmlText { pre: self.pre_block.is_some(), text: &text })?
+        for span in view {
+            w.write_span(&span.color, HtmlText { pre: self.pre_block.is_some(), text: &span.text })?
         }
         w.pre_end()?;
         Ok(())

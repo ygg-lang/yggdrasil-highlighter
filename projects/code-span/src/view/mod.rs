@@ -11,7 +11,7 @@ pub mod iter;
 ///
 /// ```
 /// use code_span::CodeView;
-/// CodeView::from("public static class MyClass {}");
+/// let _: CodeView<&'static str> = CodeView::from("public static class MyClass {}");
 /// ```
 #[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
 pub struct CodeView<T> {
@@ -29,9 +29,9 @@ pub struct CodeView<T> {
 /// ```
 #[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
 pub struct CodeSpan<T> {
-    /// text
+    /// content of the code span
     pub text: String,
-    /// info
+    /// information of the code span
     pub info: Option<T>,
 }
 
@@ -42,7 +42,7 @@ impl<T> CodeView<T> {
     ///
     /// ```
     /// use code_span::CodeView;
-    /// CodeView::blank("public static class MyClass {}");
+    /// let _: CodeView<&'static str> = CodeView::blank("public static class MyClass {}");
     /// ```
     pub fn blank(text: impl Into<String>) -> Self
     where
@@ -58,7 +58,7 @@ impl<T> CodeView<T> {
     ///
     /// ```
     /// use code_span::CodeView;
-    /// CodeView::new("public".to_string(), vec![Some("keyword"); 6]);
+    /// let _: CodeView<&'static str> = CodeView::new("public".to_string(), vec![Some("keyword"); 6]);
     /// ```
     pub fn new(text: String, info: Vec<Option<T>>) -> Self {
         assert_eq!(text.chars().count(), info.len());
@@ -70,8 +70,8 @@ impl<T> CodeView<T> {
     ///
     /// ```
     /// use code_span::CodeView;
-    /// let view = CodeView::blank("public static class MyClass {}");
-    /// assert_eq!(view.text(), "public static class MyClass {}");
+    /// let view: CodeView<&'static str> = CodeView::blank("public static class MyClass {}");
+    /// assert_eq!(view.get_text(), "public static class MyClass {}");
     /// ```
     #[inline]
     pub fn get_text(&self) -> &str {
@@ -83,8 +83,8 @@ impl<T> CodeView<T> {
     ///
     /// ```
     /// use code_span::CodeView;
-    /// let mut view = CodeView::blank("public static class MyClass {}");
-    /// view.set_text("private static class MyClass {}");
+    /// let mut view: CodeView<&'static str> = CodeView::blank("public static class MyClass {}");
+    /// assert_eq!(view.mut_text(), "public static class MyClass {}");
     /// ```
     #[inline]
     pub fn mut_text(&mut self) -> &mut String {
@@ -96,7 +96,7 @@ impl<T> CodeView<T> {
     ///
     /// ```
     /// use code_span::CodeView;
-    /// let view = CodeView::blank("public static class MyClass {}");
+    /// let view: CodeView<&'static str> = CodeView::blank("public static class MyClass {}");
     /// assert_eq!(view.get_info(), vec![None; 30]);
     /// ```
     #[inline]
@@ -109,8 +109,8 @@ impl<T> CodeView<T> {
     ///
     /// ```
     /// use code_span::CodeView;
-    /// let mut view = CodeView::blank("public");
-    /// view.mut_info().for_each(|v| v = Some("keyword"));
+    /// let mut view: CodeView<&'static str> = CodeView::blank("public");
+    /// view.mut_info().iter_mut().for_each(|v| *v = Some("keyword"));
     /// ```
     #[inline]
     pub fn mut_info(&mut self) -> &mut [Option<T>] {

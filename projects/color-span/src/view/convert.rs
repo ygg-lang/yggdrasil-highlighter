@@ -2,7 +2,10 @@ use super::*;
 
 impl Debug for ColorView {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        f.debug_tuple("ColorView").field(&self.text()).finish()
+        f.debug_tuple("ColorView")
+            .field(&self.text())
+            .field(&self.span.get_info().iter().map(|v| v.clone().unwrap_or_default()))
+            .finish()
     }
 }
 

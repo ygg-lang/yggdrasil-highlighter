@@ -6,11 +6,10 @@
 #![doc(html_logo_url = "https://raw.githubusercontent.com/oovm/color-rs/dev/.github/assets/rainbow.png")]
 
 pub use self::{
-    errors::ColorSpanError,
     view::{iter::ColorViewIter, ColorSpan, ColorView},
+    writer::html,
 };
 
-mod errors;
 mod palette;
 mod view;
-// mod writer;
+mod writer;
