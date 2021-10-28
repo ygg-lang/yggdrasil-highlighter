@@ -48,11 +48,13 @@ impl<'de> Visitor<'de> for ColorViewMap {
         }
         let mut info = Vec::with_capacity(bits.len());
         for bit in bits {
-            info.push(colors.get(bit as usize).map(|v| IStr::new(v)));
+            let item = match colors.get(bit as usize).map(|s| s.as_str()) {
+                None | Some("") => None,
+                Some(s) => Some(IStr::new(s)),
+            };
+            info.push(item);
         }
 
-        Ok(ColorView {
-            span: CodeView::new(text, bits.into_iter().map(|v| colors.get(v as usize).map(|v| IStr::new(v))).collect()),
-        })
+        Ok(ColorView { span: CodeView::new(text, info) })
     }
 }

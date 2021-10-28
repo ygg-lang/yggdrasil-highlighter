@@ -1,4 +1,4 @@
-use std::fmt::Debug;
+use std::fmt::{Debug, Formatter};
 
 use internship::IStr;
 use serde::{Deserialize, Serialize};
@@ -25,7 +25,7 @@ mod ser;
 /// ```
 /// use color_span::ColorClass;
 /// ```
-#[derive(Debug, Clone, Eq, PartialEq)]
+#[derive(Clone, Eq, PartialEq)]
 pub struct ColorView {
     span: CodeView<IStr>,
 }

@@ -1,11 +1,10 @@
 use super::*;
-use std::fmt::Formatter;
 
-// impl Debug for ColorView {
-//     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-//         f.debug_tuple("ColorView").field(&self.text()).finish()
-//     }
-// }
+impl Debug for ColorView {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        f.debug_tuple("ColorView").field(&self.text()).finish()
+    }
+}
 
 impl From<&str> for ColorView {
     fn from(s: &str) -> Self {

@@ -5,10 +5,5 @@
 #![allow(clippy::derivable_impls)]
 #![doc = include_str!("../readme.md")]
 
-// mod writer;
-//
 pub use self::view::{iter::CodeViewIter, CodeSpan, CodeView};
-
-// mod errors;
-// mod palette;
 mod view;

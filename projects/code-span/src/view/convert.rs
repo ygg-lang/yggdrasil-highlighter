@@ -1,12 +1,4 @@
-use std::fmt::{Debug, Formatter};
-
 use super::*;
-
-// impl<T> Debug for CodeView<T> {
-//     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-//         f.debug_tuple("CodeSpan").field(&self.text).finish()
-//     }
-// }
 
 impl<T> From<&str> for CodeView<T>
 where
