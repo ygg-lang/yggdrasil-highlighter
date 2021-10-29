@@ -1,9 +1,9 @@
 use std::collections::{BTreeMap, BTreeSet};
 
 use diagnostic_quick::QResult;
-use tl::{HTMLTag, Node, parse, Parser, ParserOptions};
+use tl::{parse, HTMLTag, Node, Parser, ParserOptions};
 
-use color_span::Palette;
+use color_span::ColorView;
 
 #[test]
 fn test() {
@@ -23,13 +23,8 @@ impl HighlightJs {
         let mut out = vec![];
         let parser = dom.parser();
         for block in dom.get_elements_by_class_name("hljs") {
-            let node_parser = NodeContext {
-                config: self,
-                parser,
-                language: "".to_string(),
-                code: "".to_string(),
-                span: vec![],
-            };
+            let node_parser =
+                NodeContext { config: self, parser, language: "".to_string(), code: "".to_string(), span: vec![] };
             if let Some(s) = node_parser.parse_node(block.get(parser)) {
                 out.push(s.as_palette())
             }
@@ -104,11 +99,7 @@ impl NodeContext<'_> {
                 Node::Raw(v) => {
                     let text = v.as_utf8_str();
                     let r_ptr = l_ptr + text.len();
-                    self.span.push(ClassSpan {
-                        class: parent_class.to_string(),
-                        start: l_ptr,
-                        end: r_ptr,
-                    });
+                    self.span.push(ClassSpan { class: parent_class.to_string(), start: l_ptr, end: r_ptr });
                     self.code.push_str(&v.as_utf8_str());
                     l_ptr = r_ptr;
                 }
@@ -128,18 +119,22 @@ impl NodeContext<'_> {
                 return String::new();
             }
 
-            if let Some(s) = self.config.class_map.get(class) { return s.to_string(); }
+            if let Some(s) = self.config.class_map.get(class) {
+                return s.to_string();
+            }
         }
-        println!("unknown classes: {}", classes);
+        if cfg!(debug_assertions) {
+            println!("TODO: unknown classes: {classes}");
+        }
         String::new()
     }
 }
 
 impl NodeContext<'_> {
-    pub fn as_palette(&self) -> Palette {
-        let mut palette = Palette::from(&self.code);
+    pub fn as_palette(&self) -> ColorView {
+        let mut palette = ColorView::from(&self.code);
         for span in &self.span {
-            palette.dye(span.start, span.end, &span.class).ok();
+            palette.dye_position(span.start, span.end, &span.class);
         }
         palette
     }
@@ -148,8 +143,8 @@ impl NodeContext<'_> {
 #[inline]
 fn get_class<'i>(tag: &'i HTMLTag<'i>) -> &'i str {
     match tag.attributes().class().and_then(|v| v.try_as_utf8_str()) {
-        Some(s) => { s }
-        None => { "" }
+        Some(s) => s,
+        None => "",
     }
 }
 
@@ -172,8 +167,6 @@ impl HighlightJs {
 
         self.insert_rule("hljs-section", "markup-title");
         self.insert_rule("hljs-bullet", "markup-bullet");
-
-
 
         // literal
         self.insert_rule("hljs-module-access", "module"); // 带 . 的 module path
@@ -203,7 +196,6 @@ impl HighlightJs {
         self.insert_rule("hljs-class", "class");
         self.insert_rule("class_", "class");
 
-
         // string-like
         self.insert_rule("hljs-string", "string");
         self.insert_rule("escape_", "escape");
@@ -219,4 +211,3 @@ impl HighlightJs {
         self.drop_map.insert(js.into());
     }
 }
-
