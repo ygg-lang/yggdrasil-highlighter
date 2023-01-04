@@ -1,2 +1,2 @@
 
-mod highlightjs;
+pub mod highlightjs;
